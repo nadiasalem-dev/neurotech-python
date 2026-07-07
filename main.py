@@ -7,6 +7,7 @@ threshold = 1.2
 burst_count = 0
 sensitivity = 2.5
 differences = []
+spike_indexes = []
 for i in range(200):
     wave = math.sin(i*.09)
     noise = random.uniform(-.02, .02)
@@ -26,16 +27,18 @@ print(f"Mean: {mean}")
 print(f"Variance: {variance}")
 print(f"Standard deviation: {standard_deviation}")
 detected_labels = [0] * len(data)
-for i in range(1, len(data)-1):
-    prev = data[i-1]
-    cur = data[i]
-    nextVal = data[i+1]
-    if(abs(cur - mean) > sensitivity * standard_deviation):
+for i in range(0, len(data)):
+    if(abs(data[i] - mean) > sensitivity * standard_deviation):
         spike_count += 1
         detected_labels[i] = 1
-    if((cur > 1 or cur < -1) and (prev > 1 or prev < -1) and (nextVal > 1 or nextVal < -1) ):
-        burst_count += 1
+        spike_indexes.append(i) 
+for i in range(0, len(spike_indexes)-2):
+    if(spike_indexes[i+2] <= spike_indexes[i]+20):
+        burst_count+=1
+        print(f"burst indexes: {spike_indexes[i]}, {spike_indexes[i+1]}, {spike_indexes[i+2]}")
 plt.plot(data)
 plt.title("Plot Random")
 plt.show()
 print(f"Spikes: {spike_count}, Bursts: {burst_count}")
+for i in range(0, len(spike_indexes)):
+    print(spike_indexes[i])
